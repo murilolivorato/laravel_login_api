@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterUserRequest;
 use Illuminate\Support\Facades\Http;
@@ -10,7 +9,6 @@ use Illuminate\Validation\ValidationException;
 class AuthUserController extends Controller
 {
     public function postLogin(LoginRequest $request) {
-
         try {
             $response = Http::asForm()->post(config('services.passport.login_endpoint'), [
                 'grant_type' => 'password',
@@ -29,7 +27,19 @@ class AuthUserController extends Controller
         }
     }
 
-    public function register(RegisterUserRequest $request) {
+    public function userInfo() {
+        return response()->json([
+            'email'     => $this->user->email,
+            'name'      => $this->user->name
+        ]);
+    }
+
+    public function logout() {
+        if(auth('api')->user()) {
+            auth('api')->user()->tokens->each(function ($token, $key) {
+                $token->delete();
+            });
+        }
         return response()->json(null, 200);
     }
 }
