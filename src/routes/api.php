@@ -15,5 +15,7 @@ use App\Http\Controllers\AuthUserController;
 */
 
 Route::post('/post-login',  [AuthUserController::class, 'postLogin']);
-Route::post('/logout',  [AuthUserController::class, 'logout']);
-Route::post('/user-info',  [AuthUserController::class, 'userInfo']);
+Route::group(['middleware' => ['auth:api']] , function () {
+    Route::post('/logout', [AuthUserController::class, 'logout']);
+    Route::post('/user-info', [AuthUserController::class, 'userInfo']);
+});
